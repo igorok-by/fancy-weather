@@ -5,16 +5,11 @@ html {
   line-height: $mainLineHeight;
   color: $mainFontColor;
 
-  @media screen and (max-width: $desktopWidth) {
-    font-size: 15px;
+  @include media-breakpoint-down(md) {
+    font-size: 9px;
   }
-
-  @media screen and (max-width: $tableWidth) {
-    font-size: 14px;
-  }
-
-  @media screen and (max-width: $phoneWidth) {
-    font-size: 13px;
+  @include media-breakpoint-down(xs) {
+    font-size: 8px;
   }
 }
 

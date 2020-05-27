@@ -1,0 +1,136 @@
+.button-group {
+  display: flex;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4.4rem;
+  height: 4.4rem;
+
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: $light;
+  text-transform: uppercase;
+
+  background: $info;
+  border: 0;
+  border-radius: 0.5rem;
+  border-radius: 0.5rem;
+  outline: 0;
+  cursor: pointer;
+
+  transition: $def-transition;
+
+  &:hover {
+    background: $info-light;
+  }
+
+  &:focus,
+  &:active {
+    outline: none;
+  }
+
+  &--refresh {
+    background: $info url(/assets/img/btn-bg.svg) no-repeat bottom;
+    background-size: 4.4rem;
+  }
+
+  &--wide {
+    width: 7.1rem;
+  }
+
+  &--left {
+    border-radius: 0.5rem 0 0 0.5rem;
+  }
+
+  &--inside {
+    border-right: 1px solid $info-light;
+    border-left: 1px solid $info-light;
+    border-radius: 0;
+  }
+
+  &--right {
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+
+  &--active {
+    background-color: $success;
+
+    &:hover {
+      background-color: $success;
+      cursor: auto;
+    }
+  }
+
+  &--search {
+    width: 10rem;
+    margin-left: 0;
+
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+
+  &--microphone {
+    position: absolute;
+    top: 0.2rem;
+    right: 10.5rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 3rem;
+    height: 4rem;
+
+    background: none;
+
+    &:hover {
+      background: none;
+
+      svg {
+        fill: $success;
+      }
+    }
+
+    svg {
+      width: 2rem;
+      height: 2.3rem;
+
+      transition: $def-transition;
+
+      fill: $info;
+    }
+  }
+}
+
+.button-select {
+  display: flex;
+  margin-left: 2rem;
+}
+
+.button__spinner {
+  width: 2rem;
+  height: 2rem;
+
+  background: url(/assets/img/spinner.svg) center no-repeat;
+
+  transition: $def-transition;
+
+  fill: $light;
+
+  &--do-spin {
+    animation: 1.5s linear infinite spin;
+
+    fill: $success;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(1turn);
+  }
+}

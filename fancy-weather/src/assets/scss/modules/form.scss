@@ -1,0 +1,27 @@
+.form {
+  position: relative;
+
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form__input {
+  width: 27.4rem;
+  height: 4.4rem;
+  padding: 1.3rem 1.5rem;
+
+  font-size: 1.8rem;
+  color: #ffffff;
+
+  background: $info-dark;
+  border: 0.1rem solid $info;
+  border-radius: 0.5rem 0 0 0.5rem;
+
+  transition: $def-transition;
+
+  &:focus,
+  &:active {
+    border-color: $success;
+    outline: none;
+  }
+}
