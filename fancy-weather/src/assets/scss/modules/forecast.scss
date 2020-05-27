@@ -1,0 +1,32 @@
+.forecast {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 3rem;
+
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.forecast__item:not(:last-child) {
+  margin-right: 2rem;
+}
+
+.forecast__day {
+  font-size: 2.5rem;
+}
+
+.forecast__body {
+  display: flex;
+}
+
+.forecast__tmp {
+  font-weight: 600;
+  font-size: 9rem;
+}
+
+.forecast__icon {
+  width: 6.7rem;
+  height: 4.4rem;
+  margin-top: 1rem;
+  margin-left: 1rem;
+}

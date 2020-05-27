@@ -1,0 +1,45 @@
+.widget {
+  font-weight: 700;
+  // width: 100%;
+  text-transform: uppercase;
+}
+
+.widget__location {
+  font-weight: bold;
+  font-size: 5rem;
+}
+
+.widget__date {
+  font-size: 3rem;
+  text-transform: none;
+}
+
+.widget__tmp {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+
+  font-weight: 900;
+  font-size: 34rem;
+
+  .small {
+    font-size: 20rem;
+  }
+}
+
+.widget__icon {
+  width: 16.2rem;
+  height: 10.2rem;
+  margin-top: 3.5rem;
+}
+
+.widget__descr {
+  margin-top: 3.5rem;
+
+  font-size: 2.5rem;
+
+  .lo-case {
+    text-transform: lowercase;
+  }
+}
