@@ -1,0 +1,61 @@
+html {
+  height: 100%;
+
+  font-size: $mainFontSize;
+  line-height: $mainLineHeight;
+  color: $mainFontColor;
+
+  @media screen and (max-width: $desktopWidth) {
+    font-size: 15px;
+  }
+
+  @media screen and (max-width: $tableWidth) {
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: $phoneWidth) {
+    font-size: 13px;
+  }
+}
+
+body {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  font-weight: $mainFontWeight;
+  line-height: $mainLineHeight;
+  font-family: $mainFont;
+  color: $mainFontColor;
+
+  background-color: $dark;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+  position: relative;
+
+  flex-grow: 1;
+  padding-top: rem(40);
+}
+
+*,
+::after,
+::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:active,
+a:hover {
+  outline: 0;
+}

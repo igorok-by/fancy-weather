@@ -1,0 +1,17 @@
+.row {
+  @include make-row();
+
+  &__col {
+    width: 100%;
+    
+    @include make-col-ready();
+    @include make-col-auto();
+  }
+
+  @for $i from 1 through 12 {
+    &__col-#{$i} {
+      @include make-col-ready();
+      @include make-col($i);
+    }
+  }
+}

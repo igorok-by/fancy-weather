@@ -1,0 +1,41 @@
+// Font
+$mainFont: "Exo 2", Helvetica, Arial, sans-serif;
+
+// Size
+$lgDesktopWidth: 1440px;
+$desktopWidth: 1199px;
+$smDesktopWidth: 991px;
+$tableWidth: 767px;
+$phoneWidth: 575px;
+$smPhoneWidth: 320px;
+
+// Main color
+$primary: #fcbfb7;
+$secondary: #334e58;
+$success: #a69888;
+$info: #6b6d76;
+$warning: #ff9800;
+$danger: #e51c23;
+$light: #ffffff;
+$dark: #33261d;
+$black: #000000;
+
+// Secondary color
+$primary-dark: #1b75bf;
+$primary-light: #6cb7f4;
+$warning-dark: #cc7a00;
+$warning-light: #ffb84d;
+$info-dark: #6e1b7d;
+$info-light: #ea83fc;
+$success-dark: #367d38;
+$success-light: #6dfc71;
+
+// Size
+$mainFontColor: $primary;
+$mainFontSize: 10px;
+$mainFontWeight: normal;
+$mainLineHeight: 1;
+
+// Transition
+$def-transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+$long-transition: all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
