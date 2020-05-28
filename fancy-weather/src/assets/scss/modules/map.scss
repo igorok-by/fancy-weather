@@ -1,0 +1,19 @@
+.map {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.map__img {
+  margin-bottom: 2rem;
+
+  clip-path: url(#bubble);
+}
+
+.map__lat,
+.map__long {
+  font-weight: 600;
+  font-size: 2.5rem;
+}

@@ -34,7 +34,7 @@
         <div class="row__col-6">
           <form action="/" class="form">
             <input class="form__input" type="text" placeholder="Search city or ZIP">
-            <button class="button button--search">Search</button>
+            <button class="button button--search" type="submit">Search</button>
             <button class="button button--microphone">
               <svg><use xlink:href="./assets/img/sprite.svg#icon-microphone"></use></svg>
             </button>
@@ -98,6 +98,14 @@
         </div>
 
         <div class="row__col-5">
+          <div class="map">
+            <svg height="0" width="0"><defs><clipPath id="bubble" clipPathUnits="objectBoundingBox"><path d="M0.074,0.822 H0.356 L0.436,0.962 A0.074,0.075,0,0,0,0.564,0.962 L0.644,0.822 H0.926 A0.074,0.075,0,0,0,1,0.747 V0.075 A0.074,0.075,0,0,0,0.926,0 H0.074 A0.074,0.075,0,0,0,0,0.075 V0.747 A0.074,0.075,0,0,0,0.074,0.822"></path></clipPath></defs></svg>
+
+            <img src="./assets/img/google.png" class="map__img" width="375" height="398" alt="map">
+
+            <p class="map__lat">Latitude: <span>53°54'</span></p>
+            <p class="map__long">Longitude: <span>27°34'</span></p>
+          </div>
         </div>
       </div>
     </div>
