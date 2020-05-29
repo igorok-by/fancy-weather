@@ -1,4 +1,5 @@
 import create from '../utils/create';
+import * as constants from '../utils/constants';
 
 import ForecastItem from './ForecastItem';
 import Input from './Input';
@@ -14,16 +15,45 @@ export default class WeatherApp {
     this.main = create('main');
     this.forecast = create('div', 'forecast');
 
-    this.refreshBtn = new RefreshButton();
+    this.refreshBtn = new RefreshButton().refreshBtn;
     this.selectLang = new SelectLang();
     this.selectUnit = new SelectUnit();
     this.inputForm = new Input();
 
+    this.timeOfDay = constants.TIME_OF_DAY.night;
+    this.timeOfYear = constants.TIME_OF_YEAR.summer;
+
     this.widget = '';
   }
 
+  async getDataFromAPI(url) {
+    this.url = url;
+
+    try {
+      const res = await fetch(this.url);
+      const data = await res.json();
+
+      return data;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async changeBodyBg() {
+    const url = constants.urlForUnsplash(this.timeOfDay, this.timeOfYear);
+    const data = await this.getDataFromAPI(url);
+
+    document.body.style.background = constants.fadedBackgroundWithImg(data.urls.regular);
+  }
+
+  async handleClickRefreshBtn() {
+    this.refreshBtn.classList.add(constants.CLASS_FOR_SPIN);
+    await this.changeBodyBg();
+    this.refreshBtn.classList.remove(constants.CLASS_FOR_SPIN);
+  }
+
   renderHeader() {
-    const btnGroup = create('div', 'button-group', [this.refreshBtn.refreshBtn, this.selectLang.btnLangGroup, this.selectUnit.btnLangGroup]);
+    const btnGroup = create('div', 'button-group', [this.refreshBtn, this.selectLang.btnLangGroup, this.selectUnit.btnLangGroup]);
     const firstPart = create('div', 'row__col-6', btnGroup);
     const secondPart = create('div', 'row__col-6', this.inputForm.formSearch);
     const row = create('div', 'row', [firstPart, secondPart]);
@@ -90,9 +120,15 @@ export default class WeatherApp {
     this.main = this.renderMain();
 
     this.body.prepend(this.header, this.main);
+    // this.changeBodyBg();
+  }
+
+  bindEventListeners() {
+    this.refreshBtn.addEventListener('click', async () => this.handleClickRefreshBtn());
   }
 
   init() {
     this.renderApp();
+    this.bindEventListeners();
   }
 }

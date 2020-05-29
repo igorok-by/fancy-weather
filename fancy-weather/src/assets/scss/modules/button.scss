@@ -37,6 +37,14 @@
     background-size: 4.4rem;
   }
 
+  &--do-spin {
+    .button__spinner {
+      animation: 1.5s linear infinite spin;
+
+      fill: $success;
+    }
+  }
+
   &--wide {
     width: 7.1rem;
   }
@@ -117,12 +125,6 @@
   transition: $def-transition;
 
   fill: $light;
-
-  &--do-spin {
-    animation: 1.5s linear infinite spin;
-
-    fill: $success;
-  }
 }
 
 @keyframes spin {

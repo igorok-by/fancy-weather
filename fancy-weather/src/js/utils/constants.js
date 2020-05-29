@@ -1,26 +1,22 @@
-import create from './create';
 
-const apiKey = '50fb5534';
+const UNSPLASH_API_KEY = 'UFgX_Xh8GsfhIspBPYPiu7MGs7X6MeZ1rCEkfwuiRsU';
 
-export const elementsInPage = 10;
+export const TIME_OF_DAY = {
+  morning: 'morning',
+  afternoon: 'afternoon',
+  evening: 'evening',
+  night: 'night',
+};
 
-export const header = create('header', 'header', '<h1>MovieSearch</h1>', null);
+export const TIME_OF_YEAR = {
+  spring: 'spring',
+  summer: 'summer',
+  autumn: 'autumn',
+  winter: 'winter',
+};
 
-export const footer = create('footer', 'footer',
-  `<div class="container container--sp-between">
-    <a href="https://rs.school/" class="footer__link" target="blank">RSS School 2020q1</a>
-    <a href="https://github.com/igorok-by" class="footer__link footer__link--github" target="blank">
-      <svg><use xlink:href="./assets/img/sprite.svg#icon-git"></use></svg>
-    igorok-by</a>
-  </div>`,
-  null);
+export const CLASS_FOR_SPIN = 'button--do-spin';
 
-export const main = create('main');
+export const urlForUnsplash = (queryMain, queryMinor) => `https://api.unsplash.com/photos/random?orientation=landscape&per_page=1&query=${queryMain}+${queryMinor}&client_id=${UNSPLASH_API_KEY}`;
 
-export const linkForName = (id) => `https://www.imdb.com/title/${id}/videogallery/`;
-
-export const urlSearchWord = (searchedWord, page) => `https://www.omdbapi.com/?s=${searchedWord}&page=${page}&apikey=${apiKey}`;
-
-export const urlIMDbRating = (id) => `https://www.omdbapi.com/?i=${id}&apikey=${apiKey}`;
-
-export const apiIsExpiredSentence = 'The API key is expired. Please, contact with student';
+export const fadedBackgroundWithImg = (urlToImg) => `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)) center center / cover, url("${urlToImg}") center / cover no-repeat`;
