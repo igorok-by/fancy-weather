@@ -2,9 +2,9 @@ import create from '../utils/create';
 
 export default class SelectUnit {
   constructor() {
-    this.btnFahrenheit = create('button', ['button', 'button--wide', 'button--left'], '°F');
+    this.btnFahrenheit = create('button', 'button button--wide button--left', '°F');
 
-    this.btnCelsius = create('button', ['button', 'button--wide', 'button--right'], '°C');
+    this.btnCelsius = create('button', 'button button--wide button--right', '°C');
 
     this.btnLangGroup = create('div', 'button-select', [this.btnFahrenheit, this.btnCelsius]);
   }

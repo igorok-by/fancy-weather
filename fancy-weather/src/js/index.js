@@ -1,6 +1,6 @@
-// import SearchApp from './components/SearchApp';
+import WeatherApp from './components/WeatherApp';
 
 window.onload = () => {
-  // const searchApp = new SearchApp();
-  // searchApp.init();
+  const weatherApp = new WeatherApp();
+  weatherApp.init();
 };
