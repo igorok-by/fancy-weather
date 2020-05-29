@@ -1,14 +1,14 @@
 .forecast {
-  display: flex;
-  justify-content: space-between;
   padding-top: 3rem;
 
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.forecast__item:not(:last-child) {
-  margin-right: 2rem;
+.forecast__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .forecast__day {
