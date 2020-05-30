@@ -6,14 +6,23 @@
   height: 100%;
 }
 
-.map__img {
+.map__container {
+  width: 40rem;
+  height: 40rem;
   margin-bottom: 2rem;
 
-  clip-path: url(#bubble);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+
+  -webkit-mask-clip: padding-box;
+  -webkit-mask-image: url(/assets/img/mask.svg);
+  -webkit-mask-position: center right;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: cover;
 }
 
-.map__lat,
-.map__long {
+.map__coords {
   font-weight: 600;
   font-size: 2.5rem;
 }

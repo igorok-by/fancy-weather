@@ -25,3 +25,20 @@
     outline: none;
   }
 }
+
+.form__error {
+  position: absolute;
+  right: 7.8rem;
+  bottom: -2.2rem;
+
+  display: none;
+  margin-bottom: 0;
+
+  font-size: 1.6rem;
+  color: $primary;
+
+
+  &--shown {
+    display: block;
+  }
+}

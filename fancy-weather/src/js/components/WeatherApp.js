@@ -7,6 +7,7 @@ import RefreshButton from './RefreshButton';
 import SelectLang from './SelectLang';
 import SelectUnit from './SelectUnit';
 import Widget from './Widget';
+import Map from './Map';
 
 export default class WeatherApp {
   constructor() {
@@ -18,11 +19,14 @@ export default class WeatherApp {
     this.refreshBtn = new RefreshButton().refreshBtn;
     this.selectLang = new SelectLang();
     this.selectUnit = new SelectUnit();
-    this.inputForm = new Input();
+    this.searchForm = new Input();
+    this.map = new Map();
 
     this.timeOfDay = constants.TIME_OF_DAY.night;
     this.timeOfYear = constants.TIME_OF_YEAR.summer;
+    this.currentPlace = constants.DEFAULT_PLACE;
 
+    this.currentCoords = [];
     this.widget = '';
   }
 
@@ -35,7 +39,8 @@ export default class WeatherApp {
 
       return data;
     } catch (err) {
-      return err;
+      // eslint-disable-next-line no-console
+      console.log(err);
     }
   }
 
@@ -55,7 +60,7 @@ export default class WeatherApp {
   renderHeader() {
     const btnGroup = create('div', 'button-group', [this.refreshBtn, this.selectLang.btnLangGroup, this.selectUnit.btnLangGroup]);
     const firstPart = create('div', 'row__col-6', btnGroup);
-    const secondPart = create('div', 'row__col-6', this.inputForm.formSearch);
+    const secondPart = create('div', 'row__col-6', this.searchForm.form);
     const row = create('div', 'row', [firstPart, secondPart]);
     const container = create('div', 'container', row);
 
@@ -105,9 +110,39 @@ export default class WeatherApp {
     return this.forecast;
   }
 
+  async getCoordsFromQuery(query) {
+    const data = await this.getDataFromAPI(constants.urlToGetCoords(query));
+
+    if (data.features[0]) {
+      return data.features[0].center;
+    }
+    return data.features;
+  }
+
+  showMessageOnInvalidQuery() {
+    this.searchForm.errorMessage.classList.add('form__error--shown');
+    setTimeout(() => this.searchForm.errorMessage.classList.remove('form__error--shown'), 3000);
+  }
+
+  async handleSubmitInput(e) {
+    e.preventDefault();
+
+    if (this.searchForm.input.value && this.searchForm.input.value !== this.currentPlace) {
+      const query = this.searchForm.getValue();
+      const coords = await this.getCoordsFromQuery(query);
+
+      if (coords[0]) {
+        this.currentCoords = coords;
+        this.searchForm.form.reset();
+      } else {
+        this.showMessageOnInvalidQuery();
+      }
+    }
+  }
+
   renderMain() {
     const firstColumn = create('div', 'row__col-7', [this.renderWidget(), this.renderForecast()]);
-    const secondColumn = create('div', 'row__col-5');
+    const secondColumn = create('div', 'row__col-5', this.map.generateMap());
     const row = create('div', 'row', [firstColumn, secondColumn]);
     const container = create('div', 'container', row);
 
@@ -125,10 +160,12 @@ export default class WeatherApp {
 
   bindEventListeners() {
     this.refreshBtn.addEventListener('click', async () => this.handleClickRefreshBtn());
+    this.searchForm.form.addEventListener('submit', async (event) => this.handleSubmitInput(event));
   }
 
   init() {
     this.renderApp();
     this.bindEventListeners();
+    this.map.init();
   }
 }

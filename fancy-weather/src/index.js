@@ -5,4 +5,4 @@ import './js';
 import './assets/scss/main.scss';
 
 // CSS
-// import 'normalize.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
