@@ -26,7 +26,6 @@ export default class WeatherApp {
     this.timeOfYear = constants.TIME_OF_YEAR.summer;
     this.currentPlace = constants.DEFAULT_PLACE;
 
-    this.currentCoords = [];
     this.longitude = 0;
     this.latitude = 0;
     this.widget = '';
@@ -112,7 +111,31 @@ export default class WeatherApp {
     return this.forecast;
   }
 
-  async getCoordsFromQuery(query) {
+  async handleSuccessNavigatorQuery(response) {
+    this.longitude = await response.coords.longitude;
+    this.latitude = await response.coords.latitude;
+
+    await this.flyMapToCoords([this.longitude, this.latitude]);
+    this.setLongLat();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  handleErrorNavigatorQuery() {
+    // eslint-disable-next-line no-alert
+    alert(constants.MESSAGE_ALLOW_GEO);
+  }
+
+  handleOnOpenApp() {
+    navigator
+      .geolocation
+      .getCurrentPosition(
+        (res) => this.handleSuccessNavigatorQuery(res),
+        this.handleErrorNavigatorQuery,
+        constants.NAVIGATOR_OPTIONS,
+      );
+  }
+
+  async getCoordsFromSearch(query) {
     const data = await this.getDataFromAPI(constants.urlToGetCoords(query));
 
     if (data.features[0]) {
@@ -123,12 +146,15 @@ export default class WeatherApp {
 
   showMessageOnInvalidQuery() {
     this.searchForm.errorMessage.classList.add('form__error--shown');
-    setTimeout(() => this.searchForm.errorMessage.classList.remove('form__error--shown'), 3000);
+    setTimeout(() => this.searchForm.errorMessage.classList.remove('form__error--shown'), constants.TIME_TO_SHOW_MESSAGE);
   }
 
   setLongLat() {
-    this.mapContainer.lngContainer.innerHTML = `${this.longitude}`;
-    this.mapContainer.latContainer.innerHTML = `${this.latitude}`;
+    const [longDegrees, longMinutes] = constants.splitNumberByPoint(this.longitude);
+    const [latDegrees, latMinutes] = constants.splitNumberByPoint(this.latitude);
+
+    this.mapContainer.lngContainer.innerHTML = `${longDegrees}°${longMinutes}'`;
+    this.mapContainer.latContainer.innerHTML = `${latDegrees}°${latMinutes}'`;
   }
 
   async flyMapToCoords(coords) {
@@ -145,7 +171,7 @@ export default class WeatherApp {
 
     if (this.searchForm.input.value && this.searchForm.input.value !== this.currentPlace) {
       const query = this.searchForm.getValue();
-      const coords = await this.getCoordsFromQuery(query);
+      const coords = await this.getCoordsFromSearch(query);
 
       if (coords[0]) {
         await this.flyMapToCoords(coords);
@@ -172,8 +198,8 @@ export default class WeatherApp {
   renderApp() {
     this.header = this.renderHeader();
     this.main = this.renderMain();
-
     this.body.prepend(this.header, this.main);
+
     // this.changeBodyBg();
   }
 
@@ -184,7 +210,8 @@ export default class WeatherApp {
 
   init() {
     this.renderApp();
-    this.bindEventListeners();
     this.mapContainer.init();
+    this.handleOnOpenApp();
+    this.bindEventListeners();
   }
 }
