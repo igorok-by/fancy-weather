@@ -20,13 +20,15 @@ export default class WeatherApp {
     this.selectLang = new SelectLang();
     this.selectUnit = new SelectUnit();
     this.searchForm = new Input();
-    this.map = new Map();
+    this.mapContainer = new Map();
 
     this.timeOfDay = constants.TIME_OF_DAY.night;
     this.timeOfYear = constants.TIME_OF_YEAR.summer;
     this.currentPlace = constants.DEFAULT_PLACE;
 
     this.currentCoords = [];
+    this.longitude = 0;
+    this.latitude = 0;
     this.widget = '';
   }
 
@@ -124,6 +126,20 @@ export default class WeatherApp {
     setTimeout(() => this.searchForm.errorMessage.classList.remove('form__error--shown'), 3000);
   }
 
+  setLongLat() {
+    this.mapContainer.lngContainer.innerHTML = `${this.longitude}`;
+    this.mapContainer.latContainer.innerHTML = `${this.latitude}`;
+  }
+
+  async flyMapToCoords(coords) {
+    await this.mapContainer.map.flyTo({
+      center: coords,
+      speed: 2,
+      curve: 1,
+      essential: true,
+    });
+  }
+
   async handleSubmitInput(e) {
     e.preventDefault();
 
@@ -132,7 +148,10 @@ export default class WeatherApp {
       const coords = await this.getCoordsFromQuery(query);
 
       if (coords[0]) {
-        this.currentCoords = coords;
+        await this.flyMapToCoords(coords);
+        [this.longitude, this.latitude] = coords;
+        this.setLongLat();
+
         this.searchForm.form.reset();
       } else {
         this.showMessageOnInvalidQuery();
@@ -142,7 +161,7 @@ export default class WeatherApp {
 
   renderMain() {
     const firstColumn = create('div', 'row__col-7', [this.renderWidget(), this.renderForecast()]);
-    const secondColumn = create('div', 'row__col-5', this.map.generateMap());
+    const secondColumn = create('div', 'row__col-5', this.mapContainer.generateMap());
     const row = create('div', 'row', [firstColumn, secondColumn]);
     const container = create('div', 'container', row);
 
@@ -166,6 +185,6 @@ export default class WeatherApp {
   init() {
     this.renderApp();
     this.bindEventListeners();
-    this.map.init();
+    this.mapContainer.init();
   }
 }

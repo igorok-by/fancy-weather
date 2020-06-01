@@ -26,7 +26,7 @@ export default class Map {
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11',
-      zoom: 13,
+      zoom: 12,
       attributionControl: false,
     });
   }
