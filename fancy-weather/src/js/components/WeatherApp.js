@@ -35,6 +35,7 @@ export default class WeatherApp {
     this.latitude = 0;
   }
 
+  // eslint-disable-next-line consistent-return
   async getDataFromAPI(url) {
     this.url = url;
 
@@ -72,11 +73,7 @@ export default class WeatherApp {
   }
 
   async updateWidget(placeName) {
-    const data = await this.getDataFromAPI(
-      workers.urlForWeatherAPI(
-        `${this.latitude}${constants.DELIMITER_FOR_QUERY}${this.longitude}`,
-      ),
-    );
+    const data = await this.getDataFromWeather();
     const dateNow = workers.formatter('en-GB').format(new Date(`${data.location.localtime}`));
 
     this.widget.dayNow.innerHTML = dateNow;
@@ -104,9 +101,22 @@ export default class WeatherApp {
       );
   }
 
-  async getDataFromSearch(query) {
+  async getDataFromMap(query) {
     const data = await this.getDataFromAPI(workers.urlToGetCoords(query));
-    return data.features;
+    console.log(data);
+    if (data.features[0]) {
+      return data.features;
+    }
+    return data;
+  }
+
+  async getDataFromWeather() {
+    const data = await this.getDataFromAPI(
+      workers.urlForWeatherAPI(
+        `${this.latitude}${constants.DELIMITER_FOR_QUERY}${this.longitude}`,
+      ),
+    );
+    return data;
   }
 
   showMessageOnInvalidQuery() {
@@ -136,15 +146,21 @@ export default class WeatherApp {
 
     if (this.searchForm.input.value && this.searchForm.input.value !== this.currentPlace) {
       const query = this.searchForm.getValue();
-      const dataFromSearch = await this.getDataFromSearch(query);
+      const dataFromMap = await this.getDataFromMap(query);
 
-      if (dataFromSearch[0].center[0]) {
-        [this.longitude, this.latitude] = dataFromSearch[0].center;
-        const placeName = dataFromSearch[0].matching_text || dataFromSearch[0].text;
+      if (dataFromMap[0]) {
+        [this.longitude, this.latitude] = dataFromMap[0].center;
 
-        this.updateWidget(placeName);
-        await this.flyMapToCoords([this.longitude, this.latitude]);
-        this.setLongLat();
+        if (dataFromMap[0].text && !Number.isNaN(+dataFromMap[0].text)) {
+          this.updateWidget();
+        } else {
+          const placeName = dataFromMap[0].matching_text || dataFromMap[0].text;
+          this.updateWidget(placeName);
+        }
+
+        // this.changeBodyBg();
+        // await this.flyMapToCoords([this.longitude, this.latitude]);
+        // this.setLongLat();
         this.searchForm.form.reset();
       } else {
         this.showMessageOnInvalidQuery();
