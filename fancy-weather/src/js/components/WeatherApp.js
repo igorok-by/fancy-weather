@@ -24,6 +24,9 @@ export default class WeatherApp {
     this.searchForm = new Input();
     this.widget = new Widget();
     this.mapContainer = new Map();
+    this.firstForecast = new ForecastItem();
+    this.secondForecast = new ForecastItem();
+    this.thirdForecast = new ForecastItem();
 
     this.timeNow = Date.now();
 
@@ -74,7 +77,7 @@ export default class WeatherApp {
 
   async updateWidget(placeName) {
     const data = await this.getDataFromWeather();
-    const dateNow = workers.formatter('en-GB').format(new Date(`${data.location.localtime}`));
+    const dateNow = workers.formatterNow('en-GB').format(new Date(`${data.location.localtime}`));
 
     this.widget.dayNow.innerHTML = dateNow;
     this.widget.location.innerHTML = `${placeName || data.location.name}, ${data.location.country}`;
@@ -84,6 +87,36 @@ export default class WeatherApp {
     this.widget.windNow.innerHTML = `Wind: ${workers.convertWindUnits(data.current.wind_kph)} m/s`;
     this.widget.humidityNow.innerHTML = `Humidity: ${data.current.humidity}%`;
     this.widget.icon.src = data.current.condition.icon;
+
+    this.updateForecast(data);
+  }
+
+  updateForecast(data) {
+    const forecast = data.forecast.forecastday;
+
+    this.updateForecastItem(this.firstForecast, forecast[0]);
+    this.updateForecastItem(this.secondForecast, forecast[1]);
+    this.updateForecastItem(this.thirdForecast, forecast[2]);
+  }
+
+  updateForecastItem(item, dataForItem) {
+    let whatDay;
+
+    if (item === this.firstForecast) {
+      whatDay = constants.TOMORROW;
+    } else if (item === this.secondForecast) {
+      whatDay = constants.AFTER_TOMORROW;
+    } else {
+      whatDay = constants.AFTER_AFTER_TOMORROW;
+    }
+
+    const currentItem = item;
+    const dayName = workers.formatterDay('en-GB').format(new Date().setDate(whatDay));
+
+    currentItem.day.innerHTML = dayName;
+
+    currentItem.temperature.innerHTML = `${Math.round(dataForItem.day.avgtemp_c)}°`;
+    currentItem.icon.src = dataForItem.day.condition.icon;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -103,7 +136,7 @@ export default class WeatherApp {
 
   async getDataFromMap(query) {
     const data = await this.getDataFromAPI(workers.urlToGetCoords(query));
-    console.log(data);
+
     if (data.features[0]) {
       return data.features;
     }
@@ -183,22 +216,7 @@ export default class WeatherApp {
   }
 
   renderForecast() {
-    const first = new ForecastItem({
-      day: 'Tuesday',
-      temperature: '7',
-      weather: 'icon-cloud-sun',
-    });
-    const second = new ForecastItem({
-      day: 'Wednesday',
-      temperature: '11',
-      weather: 'icon-cloud',
-    });
-    const third = new ForecastItem({
-      day: 'Thursday',
-      temperature: '7',
-      weather: 'icon-cloud-sun',
-    });
-    const row = create('div', 'row', [first.generateItem(), second.generateItem(), third.generateItem()]);
+    const row = create('div', 'row', [this.firstForecast.generateItem(), this.secondForecast.generateItem(), this.thirdForecast.generateItem()]);
 
     this.forecast.prepend(row);
     return this.forecast;

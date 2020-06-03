@@ -14,10 +14,14 @@ export const splitNumberByPoint = (number) => {
   return [arrFromNumb[0], arrFromNumb[1]];
 };
 
-export const formatter = (lang) => new Intl.DateTimeFormat(lang, {
+export const formatterNow = (lang) => new Intl.DateTimeFormat(lang, {
   weekday: 'short',
   month: 'long',
   day: 'numeric',
+});
+
+export const formatterDay = (lang) => new Intl.DateTimeFormat(lang, {
+  weekday: 'long',
 });
 
 export const convertWindUnits = (kph) => Math.round((kph * 5) / 18);
