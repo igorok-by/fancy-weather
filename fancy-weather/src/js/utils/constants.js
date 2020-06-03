@@ -7,7 +7,7 @@ export const MAPGL_ARI_KEY = 'pk.eyJ1IjoiaWdvcmtvLWJ5IiwiYSI6ImNrYXRlZ2xjZjBzaWM
 
 export const TIME_OF_DAY = {
   morning: 'morning',
-  afternoon: 'afternoon',
+  afternoon: 'daytime',
   evening: 'evening',
   night: 'night',
 };
@@ -25,9 +25,7 @@ export const NAVIGATOR_OPTIONS = {
   maximumAge: 0,
 };
 
-export const TOMORROW = new Date().getDate() + 1;
-export const AFTER_TOMORROW = new Date().getDate() + 2;
-export const AFTER_AFTER_TOMORROW = new Date().getDate() + 3;
+export const MILLISECONDS_IN_HOUR = 3600000;
 export const TIME_TO_SHOW_MESSAGE = 3000;
 export const CLASS_FOR_SPIN = 'button--do-spin';
 export const DELIMITER_FOR_QUERY = '%20';

@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+/* eslint-disable consistent-return */
+/* eslint-disable class-methods-use-this */
 /* eslint-disable no-alert */
 import create from '../utils/create';
 import * as constants from '../utils/constants';
@@ -28,17 +31,17 @@ export default class WeatherApp {
     this.secondForecast = new ForecastItem();
     this.thirdForecast = new ForecastItem();
 
-    this.timeNow = Date.now();
+    this.timeNow = new Date();
 
     this.timeOfDay = constants.TIME_OF_DAY.night;
     this.timeOfYear = constants.TIME_OF_YEAR.summer;
     this.currentPlace = '';
 
+    this.differenceInTime = 0;
     this.longitude = 0;
     this.latitude = 0;
   }
 
-  // eslint-disable-next-line consistent-return
   async getDataFromAPI(url) {
     this.url = url;
 
@@ -48,16 +51,8 @@ export default class WeatherApp {
 
       return data;
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.log(err);
     }
-  }
-
-  async changeBodyBg() {
-    const url = workers.urlForUnsplash(this.timeOfDay, this.timeOfYear);
-    const data = await this.getDataFromAPI(url);
-
-    document.body.style.background = workers.fadedBackgroundWithImg(data.urls.regular);
   }
 
   async handleClickRefreshBtn() {
@@ -66,19 +61,31 @@ export default class WeatherApp {
     this.refreshBtn.classList.remove(constants.CLASS_FOR_SPIN);
   }
 
-  async handleSuccessNavigatorQuery(response) {
-    this.longitude = await response.coords.longitude;
-    this.latitude = await response.coords.latitude;
+  async changeBodyBg() {
+    const time = this.timeNow.getHours();
 
-    this.updateWidget();
-    // await this.flyMapToCoords([this.longitude, this.latitude]);
-    // this.setLongLat();
+    if (time >= 6 && time <= 10) {
+      this.timeOfDay = constants.TIME_OF_DAY.morning;
+    } else if (time >= 11 && time <= 18) {
+      this.timeOfDay = constants.TIME_OF_DAY.afternoon;
+    } else if (time >= 19 && time <= 22) {
+      this.timeOfDay = constants.TIME_OF_DAY.evening;
+    } else {
+      this.timeOfDay = constants.TIME_OF_DAY.night;
+    }
+
+    console.log(this.timeOfDay, this.timeOfYear);
+    const url = workers.urlForUnsplash(this.timeOfDay, this.timeOfYear);
+    const data = await this.getDataFromAPI(url);
+
+    document.body.style.background = workers.fadedBackgroundWithImg(data.urls.regular);
   }
 
   async updateWidget(placeName) {
     const data = await this.getDataFromWeather();
     const dateNow = workers.formatterNow('en-GB').format(new Date(`${data.location.localtime}`));
 
+    this.differenceInTime = workers.differenceInTime(data.location.localtime);
     this.widget.dayNow.innerHTML = dateNow;
     this.widget.location.innerHTML = `${placeName || data.location.name}, ${data.location.country}`;
     this.widget.tempNow.innerHTML = `${Math.round(data.current.temp_c)}°`;
@@ -89,6 +96,24 @@ export default class WeatherApp {
     this.widget.icon.src = data.current.condition.icon;
 
     this.updateForecast(data);
+    this.setTimer();
+  }
+
+  handleShowTimeNow() {
+    this.timeNow = new Date(Date.parse(new Date())
+      + (this.differenceInTime * constants.MILLISECONDS_IN_HOUR));
+    const hours = this.timeNow.getHours();
+    let minutes = this.timeNow.getMinutes();
+    let seconds = this.timeNow.getSeconds();
+
+    minutes = workers.checkTime(minutes);
+    seconds = workers.checkTime(seconds);
+
+    this.widget.timeNow.innerHTML = `${hours}:${minutes}:${seconds}`;
+  }
+
+  setTimer() {
+    setInterval(() => this.handleShowTimeNow(), 1000);
   }
 
   updateForecast(data) {
@@ -100,26 +125,24 @@ export default class WeatherApp {
   }
 
   updateForecastItem(item, dataForItem) {
-    let whatDay;
-
-    if (item === this.firstForecast) {
-      whatDay = constants.TOMORROW;
-    } else if (item === this.secondForecast) {
-      whatDay = constants.AFTER_TOMORROW;
-    } else {
-      whatDay = constants.AFTER_AFTER_TOMORROW;
-    }
-
+    const nextDay = new Date(dataForItem.date).getDate() + 1;
     const currentItem = item;
-    const dayName = workers.formatterDay('en-GB').format(new Date().setDate(whatDay));
+    const dayName = workers.formatterDay('en-GB').format(new Date().setDate(nextDay));
 
     currentItem.day.innerHTML = dayName;
-
     currentItem.temperature.innerHTML = `${Math.round(dataForItem.day.avgtemp_c)}°`;
     currentItem.icon.src = dataForItem.day.condition.icon;
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  async handleSuccessNavigatorQuery(response) {
+    this.longitude = await response.coords.longitude;
+    this.latitude = await response.coords.latitude;
+
+    this.updateWidget();
+    await this.flyMapToCoords([this.longitude, this.latitude]);
+    this.setLongLat();
+  }
+
   handleErrorNavigatorQuery() {
     alert(constants.MESSAGE_ALLOW_GEO);
   }
@@ -140,6 +163,7 @@ export default class WeatherApp {
     if (data.features[0]) {
       return data.features;
     }
+
     return data;
   }
 
@@ -191,9 +215,9 @@ export default class WeatherApp {
           this.updateWidget(placeName);
         }
 
-        // this.changeBodyBg();
-        // await this.flyMapToCoords([this.longitude, this.latitude]);
-        // this.setLongLat();
+        this.refreshBtn.click();
+        await this.flyMapToCoords([this.longitude, this.latitude]);
+        this.setLongLat();
         this.searchForm.form.reset();
       } else {
         this.showMessageOnInvalidQuery();
@@ -237,7 +261,7 @@ export default class WeatherApp {
     this.main = this.renderMain();
     this.body.prepend(this.header, this.main);
 
-    // this.changeBodyBg();
+    this.changeBodyBg();
   }
 
   bindEventListeners() {

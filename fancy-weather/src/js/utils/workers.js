@@ -25,3 +25,15 @@ export const formatterDay = (lang) => new Intl.DateTimeFormat(lang, {
 });
 
 export const convertWindUnits = (kph) => Math.round((kph * 5) / 18);
+
+export const checkTime = (numb) => {
+  const decimal = (numb < 10) ? `0${numb}` : numb;
+  return decimal;
+};
+
+export const differenceInTime = (differentDate) => {
+  const difference = Math.ceil((Date.parse(new Date(differentDate)) - Date.parse(new Date()))
+  / constants.MILLISECONDS_IN_HOUR);
+
+  return difference;
+};
