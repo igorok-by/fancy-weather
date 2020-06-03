@@ -5,19 +5,18 @@
   text-transform: uppercase;
 }
 
-.forecast__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .forecast__day {
   font-size: 2.5rem;
   text-align: center;
+
+  @include media-breakpoint-down(sm) {
+    margin-top: 2rem;
+  }
 }
 
 .forecast__body {
   display: flex;
+  justify-content: center;
 }
 
 .forecast__tmp {

@@ -3,6 +3,11 @@
 
   display: flex;
   justify-content: flex-end;
+
+  @include media-breakpoint-down(md) {
+    justify-content: center;
+    padding-top: 2rem;
+  }
 }
 
 .form__input {

@@ -227,8 +227,8 @@ export default class WeatherApp {
 
   renderHeader() {
     const btnGroup = create('div', 'button-group', [this.refreshBtn, this.selectLang.btnLangGroup, this.selectUnit.btnLangGroup]);
-    const firstPart = create('div', 'row__col-6', btnGroup);
-    const secondPart = create('div', 'row__col-6', this.searchForm.form);
+    const firstPart = create('div', 'row__col-md-12 row__col-6', btnGroup);
+    const secondPart = create('div', 'row__col-md-12 row__col-6', this.searchForm.form);
     const row = create('div', 'row', [firstPart, secondPart]);
     const container = create('div', 'container', row);
 
@@ -247,8 +247,8 @@ export default class WeatherApp {
   }
 
   renderMain() {
-    const firstColumn = create('div', 'row__col-7', [this.widget.generateWidget(), this.renderForecast()]);
-    const secondColumn = create('div', 'row__col-5', this.mapContainer.generateMap());
+    const firstColumn = create('div', 'row__col-md-12 row__col-7', [this.widget.generateWidget(), this.renderForecast()]);
+    const secondColumn = create('div', 'row__col-md-12 row__col-5', this.mapContainer.generateMap());
     const row = create('div', 'row', [firstColumn, secondColumn]);
     const container = create('div', 'container', row);
 

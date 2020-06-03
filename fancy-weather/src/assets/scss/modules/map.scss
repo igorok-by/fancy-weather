@@ -4,6 +4,10 @@
   justify-content: center;
   align-items: center;
   height: 100%;
+
+  @include media-breakpoint-down(md) {
+    margin-bottom: 5rem;
+  }
 }
 
 .map__container {

@@ -14,27 +14,6 @@ export default class Widget {
     this.widget = create('div', 'widget');
   }
 
-  // checkTime(numb) {
-  //   return numb < 10 ? `0${numb}` : numb;
-  // }
-
-  // handleShowTimeNow() {
-  //   const now = new Date();
-  //   // console.log(now.getHours());
-  //   const hours = now.getHours();
-  //   let minutes = now.getMinutes();
-  //   let seconds = now.getSeconds();
-
-  //   minutes = this.checkTime(minutes);
-  //   seconds = this.checkTime(seconds);
-
-  //   this.timeNow = `${hours}:${minutes}:${seconds}`;
-  // }
-
-  // setTimer() {
-  //   setInterval(this.handleShowTimeNow, 1000);
-  // }
-
   generateHeader() {
     const header = create('div', 'row__col-12');
     const dateContainer = create('p', 'widget__date');
@@ -45,14 +24,14 @@ export default class Widget {
   }
 
   generateTempContainer() {
-    const tempContainer = create('div', 'row__col-7');
+    const tempContainer = create('div', 'row__col-md-12 row__col-7');
     tempContainer.append(this.tempNow);
 
     return tempContainer;
   }
 
   generateWeatherNow() {
-    const weatherContainer = create('div', 'row__col-5');
+    const weatherContainer = create('div', 'row__col-md-12 row__col-5');
     const weatherDescr = create('div', 'widget__descr');
 
     weatherDescr.append(this.weatherNow, this.tempFeeling, this.windNow, this.humidityNow);

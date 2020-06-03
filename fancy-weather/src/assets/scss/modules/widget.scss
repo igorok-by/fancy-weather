@@ -1,17 +1,24 @@
 .widget {
   font-weight: 700;
-  // width: 100%;
   text-transform: uppercase;
 }
 
 .widget__location {
   font-weight: bold;
   font-size: 5rem;
+
+  @include media-breakpoint-down(md) {
+    text-align: center;
+  }
 }
 
 .widget__date {
   font-size: 3.3rem;
   text-transform: none;
+
+  @include media-breakpoint-down(md) {
+    text-align: center;
+  }
 }
 
 .widget__now {
@@ -28,8 +35,12 @@
   font-weight: 900;
   font-size: 34rem;
 
-  .small {
-    font-size: 20rem;
+  @include media-breakpoint-down(md) {
+    justify-content: center;
+  }
+
+  @include media-breakpoint-down(sm) {
+    font-size: 28rem;
   }
 }
 
@@ -37,6 +48,11 @@
   display: block;
   width: 17rem;
   margin-bottom: 1.5rem;
+
+  @include media-breakpoint-down(md) {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .widget__descr {
@@ -52,5 +68,10 @@
 
   p:last-child {
     margin-bottom: 0;
+  }
+
+  @include media-breakpoint-down(md) {
+    margin-bottom: 2rem;
+    text-align: center;
   }
 }

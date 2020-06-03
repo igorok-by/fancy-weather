@@ -1,5 +1,9 @@
 .button-group {
   display: flex;
+
+  @include media-breakpoint-down(md) {
+    justify-content: center;
+  }
 }
 
 .button {

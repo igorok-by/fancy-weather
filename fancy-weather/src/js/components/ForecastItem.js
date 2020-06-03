@@ -5,16 +5,15 @@ export default class ForecastItem {
     this.day = create('p', 'forecast__day');
     this.temperature = create('span', 'forecast__tmp');
     this.icon = create('img', 'forecast__icon', null, null, ['alt', 'icon']);
-    this.forecastItem = create('div', 'row__col-4');
+    this.forecastItem = create('div', 'row__col-sm-12 row__col-4');
   }
 
   generateItem() {
-    const item = create('div', 'row__col-4');
     const itemBody = create('div', 'forecast__body');
 
     itemBody.append(this.temperature, this.icon);
-    item.append(this.day, itemBody);
+    this.forecastItem.append(this.day, itemBody);
 
-    return item;
+    return this.forecastItem;
   }
 }

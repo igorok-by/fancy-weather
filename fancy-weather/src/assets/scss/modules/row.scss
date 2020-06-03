@@ -14,4 +14,16 @@
       @include make-col($i);
     }
   }
+
+  @include media-breakpoint-down(md) {
+    &__col-md-12 {
+      @include make-col(12);
+    }
+  }
+
+  @include media-breakpoint-down(sm) {
+    &__col-sm-12 {
+      @include make-col(12);
+    }
+  }
 }
