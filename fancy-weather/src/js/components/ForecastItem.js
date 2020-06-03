@@ -1,23 +1,20 @@
 import create from '../utils/create';
 
 export default class ForecastItem {
-  constructor({ day, temperature, weather }) {
-    this.day = day;
-    this.temperature = temperature;
-    this.weather = weather;
+  constructor() {
+    this.day = create('p', 'forecast__day');
+    this.temperature = create('span', 'forecast__tmp');
+    this.icon = new Image();
     this.forecastItem = create('div', 'row__col-4');
   }
 
   generateItem() {
-    const template = `<div class="forecast__item">
-        <p class="forecast__day">${this.day}</p>
-        <div class="forecast__body">
-          <span class="forecast__tmp">${this.temperature}°</span>
-          <svg class="forecast__icon"><use xlink:href="./assets/img/sprite.svg#${this.weather}"></use></svg>
-        </div>
-      </div>`;
+    const item = create('div', 'row__col-4');
+    const itemBody = create('div', 'forecast__body');
 
-    this.forecastItem.insertAdjacentHTML('beforeend', template);
-    return this.forecastItem;
+    itemBody.append(this.temperature, this.icon);
+    item.append(this.day, itemBody);
+
+    return item;
   }
 }
