@@ -2,7 +2,7 @@ import create from '../utils/create';
 
 export default class SelectLang {
   constructor() {
-    this.btnLangEN = create('button', 'button button--wide button--inside', 'en');
+    this.btnLangEN = create('button', 'button button--wide button--inside button--active', 'en');
 
     this.btnLangRU = create('button', 'button button--wide button--left', 'ru');
 

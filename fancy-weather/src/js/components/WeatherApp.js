@@ -1,5 +1,7 @@
+/* eslint-disable no-alert */
 import create from '../utils/create';
 import * as constants from '../utils/constants';
+import * as workers from '../utils/workers';
 
 import ForecastItem from './ForecastItem';
 import Input from './Input';
@@ -20,15 +22,17 @@ export default class WeatherApp {
     this.selectLang = new SelectLang();
     this.selectUnit = new SelectUnit();
     this.searchForm = new Input();
+    this.widget = new Widget();
     this.mapContainer = new Map();
+
+    this.timeNow = Date.now();
 
     this.timeOfDay = constants.TIME_OF_DAY.night;
     this.timeOfYear = constants.TIME_OF_YEAR.summer;
-    this.currentPlace = constants.DEFAULT_PLACE;
+    this.currentPlace = '';
 
     this.longitude = 0;
     this.latitude = 0;
-    this.widget = '';
   }
 
   async getDataFromAPI(url) {
@@ -46,16 +50,106 @@ export default class WeatherApp {
   }
 
   async changeBodyBg() {
-    const url = constants.urlForUnsplash(this.timeOfDay, this.timeOfYear);
+    const url = workers.urlForUnsplash(this.timeOfDay, this.timeOfYear);
     const data = await this.getDataFromAPI(url);
 
-    document.body.style.background = constants.fadedBackgroundWithImg(data.urls.regular);
+    document.body.style.background = workers.fadedBackgroundWithImg(data.urls.regular);
   }
 
   async handleClickRefreshBtn() {
     this.refreshBtn.classList.add(constants.CLASS_FOR_SPIN);
     await this.changeBodyBg();
     this.refreshBtn.classList.remove(constants.CLASS_FOR_SPIN);
+  }
+
+  async handleSuccessNavigatorQuery(response) {
+    this.longitude = await response.coords.longitude;
+    this.latitude = await response.coords.latitude;
+
+    this.updateWidget();
+    // await this.flyMapToCoords([this.longitude, this.latitude]);
+    // this.setLongLat();
+  }
+
+  async updateWidget(placeName) {
+    const data = await this.getDataFromAPI(
+      workers.urlForWeatherAPI(
+        `${this.latitude}${constants.DELIMITER_FOR_QUERY}${this.longitude}`,
+      ),
+    );
+    const dateNow = workers.formatter('en-GB').format(new Date(`${data.location.localtime}`));
+
+    this.widget.dayNow.innerHTML = dateNow;
+    this.widget.location.innerHTML = `${placeName || data.location.name}, ${data.location.country}`;
+    this.widget.tempNow.innerHTML = `${Math.round(data.current.temp_c)}°`;
+    this.widget.weatherNow.innerHTML = data.current.condition.text;
+    this.widget.tempFeeling.innerHTML = `Feels like: ${data.current.feelslike_c}°`;
+    this.widget.windNow.innerHTML = `Wind: ${workers.convertWindUnits(data.current.wind_kph)} m/s`;
+    this.widget.humidityNow.innerHTML = `Humidity: ${data.current.humidity}%`;
+    this.widget.icon.src = data.current.condition.icon;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  handleErrorNavigatorQuery() {
+    alert(constants.MESSAGE_ALLOW_GEO);
+  }
+
+  handleOnStartApp() {
+    navigator
+      .geolocation
+      .getCurrentPosition(
+        (res) => this.handleSuccessNavigatorQuery(res),
+        this.handleErrorNavigatorQuery,
+        constants.NAVIGATOR_OPTIONS,
+      );
+  }
+
+  async getDataFromSearch(query) {
+    const data = await this.getDataFromAPI(workers.urlToGetCoords(query));
+    return data.features;
+  }
+
+  showMessageOnInvalidQuery() {
+    this.searchForm.errorMessage.classList.add('form__error--shown');
+    setTimeout(() => this.searchForm.errorMessage.classList.remove('form__error--shown'), constants.TIME_TO_SHOW_MESSAGE);
+  }
+
+  setLongLat() {
+    const [longDegrees, longMinutes] = workers.splitNumberByPoint(this.longitude);
+    const [latDegrees, latMinutes] = workers.splitNumberByPoint(this.latitude);
+
+    this.mapContainer.lngContainer.innerHTML = `${longDegrees}° ${longMinutes}'`;
+    this.mapContainer.latContainer.innerHTML = `${latDegrees}° ${latMinutes}'`;
+  }
+
+  async flyMapToCoords(coords) {
+    await this.mapContainer.map.flyTo({
+      center: coords,
+      speed: 2,
+      curve: 1,
+      essential: true,
+    });
+  }
+
+  async handleSubmitInput(e) {
+    e.preventDefault();
+
+    if (this.searchForm.input.value && this.searchForm.input.value !== this.currentPlace) {
+      const query = this.searchForm.getValue();
+      const dataFromSearch = await this.getDataFromSearch(query);
+
+      if (dataFromSearch[0].center[0]) {
+        [this.longitude, this.latitude] = dataFromSearch[0].center;
+        const placeName = dataFromSearch[0].matching_text || dataFromSearch[0].text;
+
+        this.updateWidget(placeName);
+        await this.flyMapToCoords([this.longitude, this.latitude]);
+        this.setLongLat();
+        this.searchForm.form.reset();
+      } else {
+        this.showMessageOnInvalidQuery();
+      }
+    }
   }
 
   renderHeader() {
@@ -70,23 +164,6 @@ export default class WeatherApp {
 
     this.header.append(container);
     return this.header;
-  }
-
-  renderWidget() {
-    const widgetTemplate = new Widget({
-      location: 'Minsk, Belarus',
-      dayNow: 'Mon 28 October',
-      timeNow: '17:23:50',
-      tempNow: 10,
-      weatherNow: 'icon-cloud',
-      tempFeeling: 7,
-      windNow: 2,
-      humidityNow: 83,
-    });
-
-
-    this.widget = widgetTemplate.generateWidget();
-    return this.widget;
   }
 
   renderForecast() {
@@ -111,82 +188,8 @@ export default class WeatherApp {
     return this.forecast;
   }
 
-  async handleSuccessNavigatorQuery(response) {
-    this.longitude = await response.coords.longitude;
-    this.latitude = await response.coords.latitude;
-
-    await this.flyMapToCoords([this.longitude, this.latitude]);
-    this.setLongLat();
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  handleErrorNavigatorQuery() {
-    // eslint-disable-next-line no-alert
-    alert(constants.MESSAGE_ALLOW_GEO);
-  }
-
-  handleOnOpenApp() {
-    navigator
-      .geolocation
-      .getCurrentPosition(
-        (res) => this.handleSuccessNavigatorQuery(res),
-        this.handleErrorNavigatorQuery,
-        constants.NAVIGATOR_OPTIONS,
-      );
-  }
-
-  async getCoordsFromSearch(query) {
-    const data = await this.getDataFromAPI(constants.urlToGetCoords(query));
-
-    if (data.features[0]) {
-      return data.features[0].center;
-    }
-    return data.features;
-  }
-
-  showMessageOnInvalidQuery() {
-    this.searchForm.errorMessage.classList.add('form__error--shown');
-    setTimeout(() => this.searchForm.errorMessage.classList.remove('form__error--shown'), constants.TIME_TO_SHOW_MESSAGE);
-  }
-
-  setLongLat() {
-    const [longDegrees, longMinutes] = constants.splitNumberByPoint(this.longitude);
-    const [latDegrees, latMinutes] = constants.splitNumberByPoint(this.latitude);
-
-    this.mapContainer.lngContainer.innerHTML = `${longDegrees}°${longMinutes}'`;
-    this.mapContainer.latContainer.innerHTML = `${latDegrees}°${latMinutes}'`;
-  }
-
-  async flyMapToCoords(coords) {
-    await this.mapContainer.map.flyTo({
-      center: coords,
-      speed: 2,
-      curve: 1,
-      essential: true,
-    });
-  }
-
-  async handleSubmitInput(e) {
-    e.preventDefault();
-
-    if (this.searchForm.input.value && this.searchForm.input.value !== this.currentPlace) {
-      const query = this.searchForm.getValue();
-      const coords = await this.getCoordsFromSearch(query);
-
-      if (coords[0]) {
-        await this.flyMapToCoords(coords);
-        [this.longitude, this.latitude] = coords;
-        this.setLongLat();
-
-        this.searchForm.form.reset();
-      } else {
-        this.showMessageOnInvalidQuery();
-      }
-    }
-  }
-
   renderMain() {
-    const firstColumn = create('div', 'row__col-7', [this.renderWidget(), this.renderForecast()]);
+    const firstColumn = create('div', 'row__col-7', [this.widget.generateWidget(), this.renderForecast()]);
     const secondColumn = create('div', 'row__col-5', this.mapContainer.generateMap());
     const row = create('div', 'row', [firstColumn, secondColumn]);
     const container = create('div', 'container', row);
@@ -211,7 +214,7 @@ export default class WeatherApp {
   init() {
     this.renderApp();
     this.mapContainer.init();
-    this.handleOnOpenApp();
+    this.handleOnStartApp();
     this.bindEventListeners();
   }
 }

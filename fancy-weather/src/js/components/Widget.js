@@ -1,41 +1,74 @@
 import create from '../utils/create';
 
 export default class Widget {
-  constructor({
-    location, dayNow, timeNow, tempNow, weatherNow, tempFeeling, windNow, humidityNow,
-  }) {
-    this.location = location;
-    this.dayNow = dayNow;
-    this.timeNow = timeNow;
-    this.tempNow = tempNow;
-    this.weatherNow = weatherNow;
-    this.tempFeeling = tempFeeling;
-    this.windNow = windNow;
-    this.humidityNow = humidityNow;
+  constructor() {
+    this.location = create('p', 'widget__location');
+    this.tempNow = create('p', 'widget__tmp');
+    this.weatherNow = create('p');
+    this.tempFeeling = create('p');
+    this.windNow = create('p');
+    this.humidityNow = create('p');
+    this.dayNow = create('span', 'widget__today');
+    this.timeNow = create('span', 'widget__now');
+    this.icon = create('img', 'widget__icon', null, null, ['alt', 'icon']);
     this.widget = create('div', 'widget');
   }
 
-  generateWidget() {
-    const template = `<div class="row">
-      <div class="row__col-12">
-        <p class="widget__location">${this.location}</p>
-        <p class="widget__date"><span class="widget__today">${this.dayNow}</span> &nbsp; <span class="widget__time">${this.timeNow}</span></p>
-      </div>
-      <div class="row__col-7">
-        <p class="widget__tmp"><span>${this.tempNow}</span><span class="small">°</span></p>
-      </div>
-      <div class="row__col-5">
-        <svg class="widget__icon"><use xlink:href="./assets/img/sprite.svg#${this.weatherNow}"></use></svg>
-        <div class="widget__descr">
-          <p>${this.weatherNow}</p>
-          <p>Feels like: <span>${this.tempFeeling}</span>°</p>
-          <p>Wind: <span>${this.windNow}</span>&nbsp;<span class="lo-case">m/s</span></p>
-          <p>Humidity: <span>${this.humidityNow}</span>%</p>
-        </div>
-      </div>
-    </div>`;
+  // checkTime(numb) {
+  //   return numb < 10 ? `0${numb}` : numb;
+  // }
 
-    this.widget.insertAdjacentHTML('beforeend', template);
+  // handleShowTimeNow() {
+  //   const now = new Date();
+  //   // console.log(now.getHours());
+  //   const hours = now.getHours();
+  //   let minutes = now.getMinutes();
+  //   let seconds = now.getSeconds();
+
+  //   minutes = this.checkTime(minutes);
+  //   seconds = this.checkTime(seconds);
+
+  //   this.timeNow = `${hours}:${minutes}:${seconds}`;
+  // }
+
+  // setTimer() {
+  //   setInterval(this.handleShowTimeNow, 1000);
+  // }
+
+  generateHeader() {
+    const header = create('div', 'row__col-12');
+    const dateContainer = create('p', 'widget__date');
+
+    dateContainer.append(this.dayNow, this.timeNow);
+    header.append(this.location, dateContainer);
+    return header;
+  }
+
+  generateTempContainer() {
+    const tempContainer = create('div', 'row__col-7');
+    tempContainer.append(this.tempNow);
+
+    return tempContainer;
+  }
+
+  generateWeatherNow() {
+    const weatherContainer = create('div', 'row__col-5');
+    const weatherDescr = create('div', 'widget__descr');
+
+    weatherDescr.append(this.weatherNow, this.tempFeeling, this.windNow, this.humidityNow);
+    weatherContainer.append(this.icon, weatherDescr);
+
+    return weatherContainer;
+  }
+
+  generateWidget() {
+    const widgetContainer = create('div', 'row');
+
+    widgetContainer.append(
+      this.generateHeader(), this.generateTempContainer(), this.generateWeatherNow(),
+    );
+    this.widget.append(widgetContainer);
+
     return this.widget;
   }
 }

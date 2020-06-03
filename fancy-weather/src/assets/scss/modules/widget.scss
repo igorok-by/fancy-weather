@@ -19,6 +19,7 @@
   z-index: 1;
 
   display: flex;
+  justify-content: center;
 
   font-weight: 900;
   font-size: 34rem;
@@ -30,17 +31,22 @@
 
 .widget__icon {
   display: block;
-  width: 16.2rem;
-  height: 10.2rem;
-  margin-top: 3.5rem;
+  width: 17rem;
+  margin-bottom: 1.5rem;
 }
 
 .widget__descr {
-  margin-top: 3.5rem;
-
   font-size: 2.5rem;
 
   .lo-case {
     text-transform: lowercase;
+  }
+
+  p {
+    margin-bottom: 1.8rem;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
   }
 }
